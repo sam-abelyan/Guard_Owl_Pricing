@@ -421,9 +421,18 @@ function getUsers() {
 function getRate(pk, u) { for (const t of plans[pk].tiers) { if (u <= t.max) return t.rate; } }
 function getTierNote(pk, u) {
   const t = plans[pk].tiers;
-  if (u <= 100) return 'Tier: $' + t[0].rate + '/user · 10–100 users';
-  if (u <= 250) return 'Tier: $' + t[1].rate + '/user · 101–250 users';
-  return 'Tier: $' + t[2].rate + '/user · 251+ users';
+  if (u <= 10) return 'Base fee includes up to 10 users';
+  if (u <= 100) return 'Tier: $' + t[0].rate + '/user · users 11–100';
+  if (u <= 250) return 'Tier: $' + t[1].rate + '/user · users 101–250';
+  return 'Tier: $' + t[2].rate + '/user · users 251+';
+}
+function calcUserCost(pk, u) {
+  if (u <= 10) return 0;
+  const billable = u - 10;
+  const t = plans[pk].tiers;
+  if (billable <= 90)  return billable * t[0].rate;                           // all in tier 1
+  if (billable <= 240) return 90 * t[0].rate + (billable - 90) * t[1].rate;  // tier 1 + tier 2
+  return 90 * t[0].rate + 150 * t[1].rate + (billable - 240) * t[2].rate;    // all three tiers
 }
 function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
 function calcOnboarding(users) {
@@ -436,8 +445,7 @@ function updateCalc() {
   document.getElementById('userCount').textContent = u.toLocaleString();
   const isEnt = currentPlan === 'enterprise';
   const pk = isEnt ? 'complete' : currentPlan;
-  const rate = getRate(pk, u);
-  const userCost = u * rate;
+  const userCost = calcUserCost(pk, u);
   const baseMonthly = plans[pk].base + userCost;
   const moPrice   = baseMonthly;
   const qPrice    = Math.round(baseMonthly * 0.90);
@@ -449,33 +457,47 @@ function updateCalc() {
   document.getElementById('ob-sub').textContent = u.toLocaleString() + ' users · ' + blocks + ' block' + (blocks > 1 ? 's' : '') + ' of 50 · one-time fee';
   document.getElementById('ob-toggle-price').textContent = fmt(fee) + ' one-time';
 
-  // Summary rows
   document.getElementById('s-plan-name').textContent = plans[currentPlan].name;
   document.getElementById('s-guards').textContent = u.toLocaleString();
-  document.getElementById('s-rate').textContent = rate;
-  document.getElementById('s-users').textContent = fmt(userCost) + ' / mo';
+
+  // Summary: show per-user line only if above 10
+  const usersRow = document.getElementById('s-users-row');
+  if (u <= 10) {
+    usersRow.classList.add('hidden');
+  } else {
+    usersRow.classList.remove('hidden');
+    const billable = u - 10;
+    document.getElementById('s-guards').textContent = billable + ' billable users (above 10 included)';
+    document.getElementById('s-users').textContent = fmt(userCost) + ' / mo';
+  }
+
   document.getElementById('s-note').textContent = getTierNote(pk, u);
   document.getElementById('s-buildout-row').classList.toggle('hidden', !isEnt);
   document.getElementById('s-base-row').classList.toggle('hidden', isEnt);
-  document.getElementById('s-users-row').classList.toggle('hidden', isEnt);
   document.getElementById('ent-note-box').classList.toggle('hidden', !isEnt);
-  document.getElementById('billing-section').classList.toggle('hidden', isEnt);
   document.getElementById('s-onboarding-row').classList.toggle('hidden', !onboardingOn || isEnt);
   if (onboardingOn && !isEnt) document.getElementById('s-onboarding-total').textContent = fmt(fee);
 
   if (isEnt) {
+    document.getElementById('bc-mo-price').textContent = '$25k–$50k';
+    document.getElementById('bc-mo-annual').textContent = '$300k–$600k / year';
+    document.getElementById('bc-q-price').textContent = '$25k–$50k';
+    document.getElementById('bc-q-annual').textContent = 'Contact us for quarterly terms';
+    document.getElementById('bc-q-savings').textContent = '';
+    document.getElementById('bc-a-price').textContent = '$25k–$50k';
+    document.getElementById('bc-a-annual').textContent = 'Contact us for annual terms';
+    document.getElementById('bc-a-savings').textContent = '';
     document.getElementById('s-note').textContent = 'Build-out phase · transitions to Complete Nest pricing after build';
   } else {
     document.getElementById('s-base').textContent = fmt(plans[pk].base) + ' / mo';
-
-    // Billing cards
+    const displayPrice = billingCycle === 'annual' ? aPrice : billingCycle === 'quarterly' ? qPrice : moPrice;
     document.getElementById('bc-mo-price').textContent = fmt(moPrice);
     document.getElementById('bc-mo-annual').textContent = fmt(moPrice * 12) + ' / year';
     document.getElementById('bc-q-price').textContent = fmt(qPrice);
-    document.getElementById('bc-q-annual').textContent = fmt(qPrice * 12) + ' / year — billed as ' + fmt(qPrice * 3) + ' per quarter';
+    document.getElementById('bc-q-annual').textContent = fmt(qPrice * 12) + ' / year';
     document.getElementById('bc-q-savings').textContent = 'Save ' + fmt((moPrice - qPrice) * 12) + ' / year';
     document.getElementById('bc-a-price').textContent = fmt(aPrice);
-    document.getElementById('bc-a-annual').textContent = fmt(aPrice * 12) + ' / year — billed upfront';
+    document.getElementById('bc-a-annual').textContent = fmt(aPrice * 12) + ' / year';
     document.getElementById('bc-a-savings').textContent = 'Save ' + fmt((moPrice - aPrice) * 12) + ' / year';
   }
 }
