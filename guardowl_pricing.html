@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guard Owl — Pricing</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-bg: #ffffff; --color-bg-secondary: #f7f7f5; --color-bg-tertiary: #f0efe9;
+    --color-text-primary: #1a1a18; --color-text-secondary: #6b6b66; --color-text-tertiary: #9a9a94;
+    --color-border: rgba(0,0,0,0.12); --color-border-hover: rgba(0,0,0,0.22);
+    --radius-md: 8px; --radius-lg: 12px; --font: -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #1c1c1a; --color-bg-secondary: #252523; --color-bg-tertiary: #2e2e2b;
+      --color-text-primary: #f0efe9; --color-text-secondary: #a0a09a; --color-text-tertiary: #6b6b66;
+      --color-border: rgba(255,255,255,0.12); --color-border-hover: rgba(255,255,255,0.22);
+    }
+  }
+  body { font-family: var(--font); background: var(--color-bg-tertiary); color: var(--color-text-primary); min-height: 100vh; padding: 2rem 1rem 4rem; }
+  .page { max-width: 880px; margin: 0 auto; }
+
+  /* Logo */
+  .logo-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 2.5rem; }
+  .logo-mark { width: 38px; height: 38px; background: #1a1a18; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .logo-mark svg { width: 22px; height: 22px; fill: white; }
+  .logo-text { font-size: 16px; font-weight: 500; }
+
+  /* Hero */
+  .hero { margin-bottom: 2rem; }
+  .hero-eyebrow { font-size: 11px; font-weight: 500; color: #378ADD; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .hero-title { font-size: 30px; font-weight: 500; line-height: 1.2; margin-bottom: 12px; }
+  .hero-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.75; max-width: 600px; }
+
+  /* Section label */
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+
+  /* Plans */
+  .plans-top { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 10px; }
+  .plan-card { border: 0.5px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.1rem; cursor: pointer; background: var(--color-bg); transition: border-color 0.15s, box-shadow 0.15s; }
+  .plan-card:hover { border-color: var(--color-border-hover); }
+  .plan-card.selected { border: 2px solid #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.1); }
+  .plan-card.selected .plan-name { color: #185FA5; }
+  .plan-enterprise { border: 0.5px solid #EF9F27; border-radius: var(--radius-lg); padding: 1.25rem; cursor: pointer; background: var(--color-bg); transition: border-color 0.15s, box-shadow 0.15s; margin-bottom: 1.75rem; }
+  .plan-enterprise:hover { border-color: #BA7517; }
+  .plan-enterprise.selected { border: 2px solid #BA7517; background: #FAEEDA; box-shadow: 0 0 0 3px rgba(186,117,23,0.1); }
+  .plan-enterprise.selected .plan-name { color: #633806; }
+  .ent-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .ent-price-note { font-size: 12px; color: #854F0B; margin-left: auto; text-align: right; line-height: 1.7; }
+  .ent-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .ent-col-label { font-size: 10px; font-weight: 500; color: #854F0B; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 0.5px solid rgba(239,159,39,0.4); }
+  .plan-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .plan-badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; display: inline-block; margin-bottom: 10px; font-weight: 500; }
+  .badge-core { background: #E6F1FB; color: #0C447C; }
+  .badge-pro { background: #EEEDFE; color: #3C3289; }
+  .badge-complete { background: #E1F5EE; color: #085041; }
+  .badge-enterprise { background: #FAEEDA; color: #633806; }
+  .plan-pricing { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 10px; line-height: 1.8; }
+  .plan-divider { border: none; border-top: 0.5px solid var(--color-border); margin: 10px 0; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .feature-list li { font-size: 12px; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 7px; line-height: 1.5; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+  .dot-blue { background: #378ADD; } .dot-purple { background: #7F77DD; }
+  .dot-green { background: #1D9E75; } .dot-amber { background: #BA7517; }
+  .feat-label { font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 10px; display: inline-block; margin-left: 3px; vertical-align: middle; }
+  .label-ai { background: #EEEDFE; color: #534AB7; }
+  .label-new { background: #E1F5EE; color: #0F6E56; }
+  .label-custom { background: #FAEEDA; color: #633806; }
+
+  /* Users */
+  .users-block { margin-bottom: 1.75rem; }
+  .slider-row { display: flex; align-items: center; gap: 14px; }
+  .slider-row input[type=range] { flex: 1; height: 4px; accent-color: #378ADD; cursor: pointer; }
+  .slider-end { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; }
+  .user-count-display { font-size: 24px; font-weight: 500; min-width: 130px; text-align: right; }
+  .user-count-display span { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); }
+  .custom-users-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px 16px; border: 0.5px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-secondary); }
+  .custom-users-row label { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
+  .custom-users-row input[type=number] { width: 110px; font-size: 14px; padding: 5px 10px; border: 0.5px solid var(--color-border-hover); border-radius: var(--radius-md); background: var(--color-bg); color: var(--color-text-primary); font-family: var(--font); outline: none; }
+  .custom-users-row input:focus { border-color: #378ADD; }
+
+  /* Onboarding module */
+  .mod-row { border: 0.5px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-bg); overflow: hidden; margin-bottom: 1.75rem; transition: border-color 0.15s; }
+  .mod-row:hover { border-color: var(--color-border-hover); }
+  .mod-row.active { border-color: #378ADD; }
+  .mod-top { display: flex; align-items: flex-start; justify-content: space-between; padding: 14px 16px; cursor: pointer; gap: 14px; }
+  .mod-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .mod-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+  .mod-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+  .mod-price { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; text-align: right; font-weight: 500; }
+  .toggle { width: 38px; height: 22px; border-radius: 11px; background: var(--color-border-hover); position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: #378ADD; }
+  .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on::after { left: 18px; }
+  .mod-expanded { display: none; border-top: 0.5px solid var(--color-border); }
+  .mod-expanded.visible { display: block; }
+  .onboarding-features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 16px; border-bottom: 0.5px solid var(--color-border); }
+  .ob-feature { display: flex; align-items: flex-start; gap: 8px; }
+  .ob-num { width: 20px; height: 20px; border-radius: 50%; background: #E6F1FB; color: #185FA5; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .ob-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+  .onboarding-calc { padding: 14px 16px; background: var(--color-bg-secondary); }
+  .ob-result { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--color-bg); border: 0.5px solid var(--color-border); border-radius: var(--radius-md); }
+  .ob-result-label { font-size: 13px; color: var(--color-text-secondary); }
+  .ob-result-price { font-size: 22px; font-weight: 500; color: #185FA5; }
+  .ob-result-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+  /* Summary */
+  .summary { background: var(--color-bg-secondary); border-radius: var(--radius-lg); padding: 1.4rem; border: 0.5px solid var(--color-border); margin-bottom: 1.5rem; }
+  .s-row { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; color: var(--color-text-secondary); }
+  .s-row.hidden { display: none; }
+  .s-divider { border: none; border-top: 0.5px solid var(--color-border); margin: 12px 0; }
+  .s-totals { display: grid; grid-template-columns: 1fr 1fr; margin-top: 4px; }
+  .s-total-cell { padding: 8px 0; }
+  .s-total-cell:first-child { border-right: 0.5px solid var(--color-border); padding-right: 20px; }
+  .s-total-cell:last-child { padding-left: 20px; }
+  .s-total-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .s-total-value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
+  .s-total-value.annual { color: #185FA5; font-size: 32px; }
+  .s-note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 8px; text-align: right; }
+  .ent-note-box { background: #FAEEDA; border: 0.5px solid #EF9F27; border-radius: var(--radius-md); padding: 12px 16px; margin-top: 12px; font-size: 13px; color: #633806; line-height: 1.7; }
+  .ent-note-box.hidden { display: none; }
+
+  .footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--color-text-tertiary); }
+  .footer a { color: #378ADD; text-decoration: none; }
+
+  /* Billing cycle */
+  .billing-section { padding-top: 4px; }
+  .billing-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .billing-toggle-wrap { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .billing-btn { padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; font-family: var(--font); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .billing-btn:hover { border-color: var(--color-border-hover); color: var(--color-text-primary); }
+  .billing-btn.active { border-color: #378ADD; color: #185FA5; background: #E6F1FB; }
+  .billing-discount { font-size: 10px; font-weight: 500; background: #E1F5EE; color: #0F6E56; padding: 1px 6px; border-radius: 10px; }
+  .billing-cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+  .billing-card { border: 0.5px solid var(--color-border); border-radius: var(--radius-md); padding: 12px 14px; background: var(--color-bg); opacity: 0.45; transition: opacity 0.2s, border-color 0.2s; position: relative; }
+  .billing-card.active-card { opacity: 1; border-color: #378ADD; box-shadow: 0 0 0 2px rgba(55,138,221,0.1); }
+  .billing-card.best { border-color: #1D9E75; }
+  .billing-card.best.active-card { border-color: #1D9E75; box-shadow: 0 0 0 2px rgba(29,158,117,0.12); }
+  .bc-best-badge { font-size: 10px; font-weight: 500; color: #0F6E56; background: #E1F5EE; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+  .bc-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 6px; }
+  .bc-price { display: flex; align-items: baseline; gap: 2px; margin-bottom: 3px; }
+  .bc-price span:first-child { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
+  .bc-per { font-size: 13px; color: var(--color-text-secondary); }
+  .bc-annual-eq { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .bc-savings { font-size: 12px; font-weight: 500; }
+  .bc-savings.positive { color: #0F6E56; }
+  .bc-note { font-size: 11px; color: var(--color-text-tertiary); }
+
+  @media (max-width: 640px) {
+    .plans-top, .ent-inner, .billing-cards { grid-template-columns: 1fr; }
+    .detection-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo-bar">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
+    </div>
+    <span class="logo-text">Guard Owl</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Transparent pricing</div>
+    <div class="hero-title">Simple, per-user pricing that scales with you</div>
+    <div class="hero-desc">Choose the plan that fits your operation. All plans include a base platform fee plus per-user pricing that drops as you scale. No hidden fees, no long-term lock-in to get started.</div>
+  </div>
+
+  <p class="section-label">Choose a plan</p>
+  <div class="plans-top">
+
+    <div class="plan-card selected" onclick="selectPlan('core',this)">
+      <div class="plan-name">Core</div>
+      <span class="plan-badge badge-core">Core</span>
+      <div class="plan-pricing">$250 base / month<br>$15/user (10–100) · $12 (101–250) · $10 (251+)</div>
+      <hr class="plan-divider">
+      <ul class="feature-list">
+        <li><span class="dot dot-blue"></span>Real-time GPS tracking</li>
+        <li><span class="dot dot-blue"></span>Geofencing alerts</li>
+        <li><span class="dot dot-blue"></span>Mobile patrol routes & nav</li>
+        <li><span class="dot dot-blue"></span>Patrol checkpoint verification</li>
+        <li><span class="dot dot-blue"></span>Automated guard scheduling</li>
+        <li><span class="dot dot-blue"></span>Shift & coverage management</li>
+        <li><span class="dot dot-blue"></span>AI-powered incident reporting</li>
+        <li><span class="dot dot-blue"></span>Multi-language translation</li>
+        <li><span class="dot dot-blue"></span>Real-time report delivery</li>
+        <li><span class="dot dot-blue"></span>Client transparency portal</li>
+        <li><span class="dot dot-blue"></span>24/7 operations center</li>
+        <li><span class="dot dot-blue"></span>Guard mobile app</li>
+        <li><span class="dot dot-blue"></span>Analytics dashboard</li>
+        <li><span class="dot dot-blue"></span>Digital incident logs & audit trail</li>
+      </ul>
+    </div>
+
+    <div class="plan-card" onclick="selectPlan('pro',this)">
+      <div class="plan-name">Pro</div>
+      <span class="plan-badge badge-pro">Pro</span>
+      <div class="plan-pricing">$399 base / month<br>$25/user (10–100) · $22 (101–250) · $20 (251+)</div>
+      <hr class="plan-divider">
+      <ul class="feature-list">
+        <li><span class="dot dot-blue"></span>Everything in Core</li>
+        <li><span class="dot dot-purple"></span>AI-enhanced incident reports <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-purple"></span>AI supervision agent <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-purple"></span>AI dispatch agent <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-purple"></span>Automated anomaly detection <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-purple"></span>Predictive scheduling optimization <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-blue"></span>CAD (Computer-Aided Dispatch)</li>
+        <li><span class="dot dot-blue"></span>Advanced analytics & reporting</li>
+        <li><span class="dot dot-blue"></span>Priority 24/7 support</li>
+      </ul>
+    </div>
+
+    <div class="plan-card" onclick="selectPlan('complete',this)">
+      <div class="plan-name">Complete Nest</div>
+      <span class="plan-badge badge-complete">Complete</span>
+      <div class="plan-pricing">$500 base / month<br>$35/user (10–100) · $33 (101–250) · $30 (251+)</div>
+      <hr class="plan-divider">
+      <ul class="feature-list">
+        <li><span class="dot dot-purple"></span>Everything in Pro</li>
+        <li><span class="dot dot-green"></span>Full AI agent suite <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-green"></span>AI workforce intelligence <span class="feat-label label-ai">AI</span></li>
+        <li><span class="dot dot-green"></span>Billing & payroll tracking <span class="feat-label label-new">New</span></li>
+        <li><span class="dot dot-green"></span>Automated payroll export</li>
+        <li><span class="dot dot-green"></span>Client billing automation</li>
+        <li><span class="dot dot-green"></span>White-label client portal</li>
+        <li><span class="dot dot-green"></span>Custom integrations & API</li>
+        <li><span class="dot dot-green"></span>Dedicated success manager</li>
+        <li><span class="dot dot-green"></span>Revenue sharing opportunities</li>
+        <li><span class="dot dot-green"></span>Enterprise SLA & priority support</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="plan-enterprise" onclick="selectPlan('enterprise',this)">
+    <div class="ent-header">
+      <div><div class="plan-name">Enterprise</div><span class="plan-badge badge-enterprise">Enterprise</span></div>
+      <div class="ent-price-note">Custom build-out · $25,000–$50,000/month<br>Transitions to Complete Nest pricing after build</div>
+    </div>
+    <div class="ent-inner">
+      <div>
+        <div class="ent-col-label">Complete Nest included</div>
+        <ul class="feature-list">
+          <li><span class="dot dot-amber"></span>Everything in Complete Nest</li>
+          <li><span class="dot dot-amber"></span>Full AI agent suite <span class="feat-label label-ai">AI</span></li>
+          <li><span class="dot dot-amber"></span>Billing & payroll tracking</li>
+          <li><span class="dot dot-amber"></span>White-label client portal</li>
+          <li><span class="dot dot-amber"></span>Dedicated success manager</li>
+          <li><span class="dot dot-amber"></span>Enterprise SLA & support</li>
+        </ul>
+      </div>
+      <div>
+        <div class="ent-col-label">Custom risk & analytics</div>
+        <ul class="feature-list">
+          <li><span class="dot dot-amber"></span>Risk intelligence dashboard</li>
+          <li><span class="dot dot-amber"></span>Compliance & audit reporting</li>
+          <li><span class="dot dot-amber"></span>Incident trend analysis</li>
+          <li><span class="dot dot-amber"></span>Multi-site risk scoring</li>
+          <li><span class="dot dot-amber"></span>Executive reporting suite</li>
+          <li><span class="dot dot-amber"></span>Regulatory compliance exports</li>
+          <li><span class="dot dot-amber"></span>Historical data warehouse</li>
+        </ul>
+      </div>
+      <div>
+        <div class="ent-col-label">Custom build-out</div>
+        <ul class="feature-list">
+          <li><span class="dot dot-amber"></span>Custom platform build-out <span class="feat-label label-custom">Custom</span></li>
+          <li><span class="dot dot-amber"></span>Tailored workflows & automation <span class="feat-label label-custom">Custom</span></li>
+          <li><span class="dot dot-amber"></span>Custom integrations scoped to ops <span class="feat-label label-custom">Custom</span></li>
+          <li><span class="dot dot-amber"></span>Dedicated build team & timeline</li>
+          <li><span class="dot dot-amber"></span>Transitions to Complete Nest post-build</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">Number of users</p>
+  <div class="users-block">
+    <div class="slider-row">
+      <span class="slider-end">10</span>
+      <input type="range" min="10" max="1000" value="50" step="1" id="userSlider" oninput="syncSlider()">
+      <span class="slider-end">1,000</span>
+      <div class="user-count-display"><span id="userCount">50</span> <span>users</span></div>
+    </div>
+    <div class="custom-users-row">
+      <label>Need more than 1,000 users? Enter exact count:</label>
+      <input type="number" id="customUsers" min="1" placeholder="e.g. 1,500" oninput="syncCustom()">
+    </div>
+  </div>
+
+  <p class="section-label">Onboarding package</p>
+  <div class="mod-row" id="mod-onboarding">
+    <div class="mod-top" onclick="toggleOnboarding()">
+      <div class="mod-info">
+        <div class="mod-name">Full-service onboarding</div>
+        <div class="mod-desc">Everything your team needs to go live, fully configured and ready from day one. Priced at $1,000 per 50 users — calculated automatically from your user count above.</div>
+      </div>
+      <div class="mod-right">
+        <div class="mod-price" id="ob-toggle-price">—</div>
+        <div class="toggle" id="toggle-onboarding"></div>
+      </div>
+    </div>
+    <div class="mod-expanded" id="onboarding-expanded">
+      <div class="onboarding-features">
+        <div class="ob-feature"><div class="ob-num">1</div><div class="ob-text">Full creation and configuration of all customer sites</div></div>
+        <div class="ob-feature"><div class="ob-num">2</div><div class="ob-text">Complete geofence setup for all locations</div></div>
+        <div class="ob-feature"><div class="ob-num">3</div><div class="ob-text">Task and post order configuration for every site</div></div>
+        <div class="ob-feature"><div class="ob-num">4</div><div class="ob-text">Client and site-level setup within the platform</div></div>
+        <div class="ob-feature"><div class="ob-num">5</div><div class="ob-text">Unlimited back office training sessions for all staff</div></div>
+        <div class="ob-feature"><div class="ob-num">6</div><div class="ob-text">Guard video training modules available 24/7</div></div>
+        <div class="ob-feature" style="grid-column:span 2"><div class="ob-num">7</div><div class="ob-text">24/7 live support on call throughout the entire onboarding period</div></div>
+      </div>
+      <div class="onboarding-calc">
+        <div class="ob-result">
+          <div>
+            <div class="ob-result-label">One-time onboarding fee</div>
+            <div class="ob-result-sub" id="ob-sub">Based on your user count</div>
+          </div>
+          <div class="ob-result-price" id="ob-price">$1,000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="s-row" id="s-base-row"><span>Base fee (<span id="s-plan-name">Core</span>)</span><span id="s-base">$250 / mo</span></div>
+    <div class="s-row" id="s-users-row"><span>Users — <span id="s-guards">50</span> × $<span id="s-rate">15</span>/user</span><span id="s-users">$750 / mo</span></div>
+    <div class="s-row hidden" id="s-buildout-row"><span>Custom build-out (estimated range)</span><span>$25,000–$50,000 / mo</span></div>
+    <div class="s-row hidden" id="s-onboarding-row"><span>Full-service onboarding (one-time)</span><span id="s-onboarding-total">$1,000</span></div>
+    <hr class="s-divider">
+
+    <!-- Billing cycle selector -->
+    <div class="billing-section" id="billing-section">
+      <div class="billing-label">Billing cycle</div>
+      <div class="billing-toggle-wrap">
+        <button class="billing-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="billing-btn" id="btn-quarterly" onclick="setBilling('quarterly')">Quarterly <span class="billing-discount">10% off</span></button>
+        <button class="billing-btn" id="btn-annual" onclick="setBilling('annual')">Annual <span class="billing-discount">20% off</span></button>
+      </div>
+
+      <div class="billing-cards">
+        <div class="billing-card" id="bc-monthly">
+          <div class="bc-label">Monthly · 12-month contract</div>
+          <div class="bc-price"><span id="bc-mo-price">$1,000</span><span class="bc-per">/mo</span></div>
+          <div class="bc-annual-eq" id="bc-mo-annual">$12,000 / year</div>
+          <div class="bc-note">Standard rate · billed each month</div>
+        </div>
+        <div class="billing-card" id="bc-quarterly">
+          <div class="bc-label">Billed every quarter</div>
+          <div class="bc-price"><span id="bc-q-price">$900</span><span class="bc-per">/mo</span></div>
+          <div class="bc-annual-eq" id="bc-q-annual">$10,800 / year</div>
+          <div class="bc-savings positive" id="bc-q-savings">Save $1,200 / year</div>
+        </div>
+        <div class="billing-card best" id="bc-annual">
+          <div class="bc-best-badge">Best value</div>
+          <div class="bc-label">Billed annually upfront</div>
+          <div class="bc-price"><span id="bc-a-price">$800</span><span class="bc-per">/mo</span></div>
+          <div class="bc-annual-eq" id="bc-a-annual">$9,600 / year</div>
+          <div class="bc-savings positive" id="bc-a-savings">Save $2,400 / year</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-note" id="s-note">Tier: $15/user · 10–100 users</div>
+    <div class="ent-note-box hidden" id="ent-note-box">Build-out phase: $25,000–$50,000/month depending on scope and requirements. Includes custom risk & analytics platform, tailored workflows, and full integrations. Once complete, billing transitions to <strong>Complete Nest pricing</strong> based on your user count.</div>
+  </div>
+
+  <div class="footer">
+    <a href="https://guardowlco.com" target="_blank">guardowlco.com</a> · <a href="https://guardowlco.com/demo" target="_blank">Book a demo</a>
+  </div>
+
+</div>
+<script>
+const plans = {
+  core:       { base: 250,  name: 'Core',          tiers: [{max:100,rate:15},{max:250,rate:12},{max:Infinity,rate:10}] },
+  pro:        { base: 399,  name: 'Pro',            tiers: [{max:100,rate:25},{max:250,rate:22},{max:Infinity,rate:20}] },
+  complete:   { base: 500,  name: 'Complete Nest',  tiers: [{max:100,rate:35},{max:250,rate:33},{max:Infinity,rate:30}] },
+  enterprise: { base: null, name: 'Enterprise',     tiers: [{max:100,rate:35},{max:250,rate:33},{max:Infinity,rate:30}] }
+};
+let currentPlan = 'core', useCustom = false, onboardingOn = false, billingCycle = 'monthly';
+
+function selectPlan(plan, el) {
+  currentPlan = plan;
+  document.querySelectorAll('.plan-card, .plan-enterprise').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateCalc();
+}
+
+function toggleOnboarding() {
+  onboardingOn = !onboardingOn;
+  document.getElementById('toggle-onboarding').classList.toggle('on', onboardingOn);
+  document.getElementById('onboarding-expanded').classList.toggle('visible', onboardingOn);
+  document.getElementById('mod-onboarding').classList.toggle('active', onboardingOn);
+  updateCalc();
+}
+
+function setBilling(cycle) {
+  billingCycle = cycle;
+  ['monthly','quarterly','annual'].forEach(c => {
+    document.getElementById('btn-' + c).classList.toggle('active', c === cycle);
+    document.getElementById('bc-' + (c === 'annual' ? 'annual' : c === 'quarterly' ? 'quarterly' : 'monthly')).classList.toggle('active-card', c === cycle);
+  });
+  updateCalc();
+}
+
+function syncSlider() { useCustom = false; document.getElementById('customUsers').value = ''; updateCalc(); }
+function syncCustom() {
+  const val = parseInt(document.getElementById('customUsers').value);
+  useCustom = !!(val && val > 0);
+  if (useCustom) document.getElementById('userSlider').value = Math.min(val, 1000);
+  updateCalc();
+}
+function getUsers() {
+  if (useCustom) { const v = parseInt(document.getElementById('customUsers').value); return v > 0 ? v : parseInt(document.getElementById('userSlider').value); }
+  return parseInt(document.getElementById('userSlider').value);
+}
+function getRate(pk, u) { for (const t of plans[pk].tiers) { if (u <= t.max) return t.rate; } }
+function getTierNote(pk, u) {
+  const t = plans[pk].tiers;
+  if (u <= 100) return 'Tier: $' + t[0].rate + '/user · 10–100 users';
+  if (u <= 250) return 'Tier: $' + t[1].rate + '/user · 101–250 users';
+  return 'Tier: $' + t[2].rate + '/user · 251+ users';
+}
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function calcOnboarding(users) {
+  const blocks = Math.ceil(users / 50);
+  return { fee: blocks * 1000, blocks };
+}
+
+function updateCalc() {
+  const u = getUsers();
+  document.getElementById('userCount').textContent = u.toLocaleString();
+  const isEnt = currentPlan === 'enterprise';
+  const pk = isEnt ? 'complete' : currentPlan;
+  const rate = getRate(pk, u);
+  const userCost = u * rate;
+  const baseMonthly = plans[pk].base + userCost;
+  const moPrice   = baseMonthly;
+  const qPrice    = Math.round(baseMonthly * 0.90);
+  const aPrice    = Math.round(baseMonthly * 0.80);
+
+  // Onboarding
+  const { fee, blocks } = calcOnboarding(u);
+  document.getElementById('ob-price').textContent = fmt(fee);
+  document.getElementById('ob-sub').textContent = u.toLocaleString() + ' users · ' + blocks + ' block' + (blocks > 1 ? 's' : '') + ' of 50 · one-time fee';
+  document.getElementById('ob-toggle-price').textContent = fmt(fee) + ' one-time';
+
+  // Summary rows
+  document.getElementById('s-plan-name').textContent = plans[currentPlan].name;
+  document.getElementById('s-guards').textContent = u.toLocaleString();
+  document.getElementById('s-rate').textContent = rate;
+  document.getElementById('s-users').textContent = fmt(userCost) + ' / mo';
+  document.getElementById('s-note').textContent = getTierNote(pk, u);
+  document.getElementById('s-buildout-row').classList.toggle('hidden', !isEnt);
+  document.getElementById('s-base-row').classList.toggle('hidden', isEnt);
+  document.getElementById('s-users-row').classList.toggle('hidden', isEnt);
+  document.getElementById('ent-note-box').classList.toggle('hidden', !isEnt);
+  document.getElementById('billing-section').classList.toggle('hidden', isEnt);
+  document.getElementById('s-onboarding-row').classList.toggle('hidden', !onboardingOn || isEnt);
+  if (onboardingOn && !isEnt) document.getElementById('s-onboarding-total').textContent = fmt(fee);
+
+  if (isEnt) {
+    document.getElementById('s-note').textContent = 'Build-out phase · transitions to Complete Nest pricing after build';
+  } else {
+    document.getElementById('s-base').textContent = fmt(plans[pk].base) + ' / mo';
+
+    // Billing cards
+    document.getElementById('bc-mo-price').textContent = fmt(moPrice);
+    document.getElementById('bc-mo-annual').textContent = fmt(moPrice * 12) + ' / year';
+    document.getElementById('bc-q-price').textContent = fmt(qPrice);
+    document.getElementById('bc-q-annual').textContent = fmt(qPrice * 12) + ' / year — billed as ' + fmt(qPrice * 3) + ' per quarter';
+    document.getElementById('bc-q-savings').textContent = 'Save ' + fmt((moPrice - qPrice) * 12) + ' / year';
+    document.getElementById('bc-a-price').textContent = fmt(aPrice);
+    document.getElementById('bc-a-annual').textContent = fmt(aPrice * 12) + ' / year — billed upfront';
+    document.getElementById('bc-a-savings').textContent = 'Save ' + fmt((moPrice - aPrice) * 12) + ' / year';
+  }
+}
+
+// Init
+updateCalc();
+document.getElementById('bc-monthly').classList.add('active-card');
+</script>
+</body>
+</html>
